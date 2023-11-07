@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
@@ -29,7 +29,8 @@ async function run() {
     await client.connect();
 
      // Establish DB and verify connection
-     const jobCollection = client.db("jobsDB").collection("jobs");
+     const jobCollection = client.db("jobsDB").collection("jobs"); // AddJobs
+     const contactCollection = client.db("jobsDB").collection("contacts"); // Contacts
 
       // all post requests here
       app.post('/jobs', async (req, res) => {
@@ -39,9 +40,32 @@ async function run() {
         res.json(result);
       });
 
+      app.post('/contacts', async (req, res) => {
+        const newContact = req.body;
+        // console.log(newContact); // checking if the data is coming or hitting (ok)
+        const result = await contactCollection.insertOne(newContact);
+        res.json(result);
+      });
+
     // all get requests here
+     app.get('/jobs', async (req, res) => {
+      const cursor = jobCollection.find({});
+      const jobs = await cursor.toArray();
+      res.send(jobs);
+    })
 
+    // find operator  (get single job)
+    app.get('/jobs/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const job = await jobCollection.findOne(query);
+      res.json(job);
+    });
 
+    // delete operator (delete single job)
+    // will add it
+    // update operator (update single job)
+     // will add it
 
 
 
