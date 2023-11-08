@@ -7,7 +7,12 @@ const port = process.env.PORT || 5000;
 
 
 // Middleware
-app.use(cors());
+app.use(cors(
+  {
+    origin: ['https://654bcd3f440eb82240bcf430--jobsfinderbd.netlify.app'],
+    credentials: true,
+  }
+));
 app.use(express.json());
 
 // Setup MongoDB
