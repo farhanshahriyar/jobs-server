@@ -57,15 +57,21 @@ async function run() {
     // find operator  (get single job)
     app.get('/jobs/:id', async (req, res) => {
       const id = req.params.id;
+      console.log(id)
       const query = { _id: new ObjectId(id) };
       const job = await jobCollection.findOne(query);
       res.json(job);
     });
 
     // delete operator (delete single job)
-    // will add it
+    app.delete('/jobs/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await jobCollection.deleteOne(query);
+      res.json(result);
+    });
     // update operator (update single job)
-     // will add it
+    // add it late
 
 
 
