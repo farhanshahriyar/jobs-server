@@ -31,6 +31,8 @@ async function run() {
      // Establish DB and verify connection
      const jobCollection = client.db("jobsDB").collection("jobs"); // AddJobs
      const contactCollection = client.db("jobsDB").collection("contacts"); // Contacts
+      const appliedJobCollection = client.db("jobsDB").collection("appliedjobs"); // AppliedJobs
+    // const blogsCollection = client.db("jobsDB").collection("blogs"); // Blogs
 
       // all post requests here
       app.post('/jobs', async (req, res) => {
@@ -47,6 +49,13 @@ async function run() {
         res.json(result);
       });
 
+      app.post('/appliedjobs', async (req, res) => {
+        const newAppliedJob = req.body;
+        // console.log(newAppliedJob); // checking if the data is coming or hitting (ok)
+        const result = await appliedJobCollection.insertOne(newAppliedJob);
+        res.json(result);
+      });
+
     // all get requests here
      app.get('/jobs', async (req, res) => {
       const cursor = jobCollection.find({});
@@ -57,11 +66,18 @@ async function run() {
     // find operator  (get single job)
     app.get('/jobs/:id', async (req, res) => {
       const id = req.params.id;
-      console.log(id)
+      // console.log(id)
       const query = { _id: new ObjectId(id) };
       const job = await jobCollection.findOne(query);
       res.json(job);
     });
+
+    app.get('/appliedjobs' , async (req, res) => {
+      const cursor = appliedJobCollection.find({});
+      const result = await cursor.toArray();
+      res.send(result);
+    })
+
 
     // delete operator (delete single job)
     app.delete('/jobs/:id', async (req, res) => {
