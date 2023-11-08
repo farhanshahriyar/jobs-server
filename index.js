@@ -86,8 +86,28 @@ async function run() {
       const result = await jobCollection.deleteOne(query);
       res.json(result);
     });
+
     // update operator (update single job)
-    // add it late
+    app.put('/jobs/:id', async (req, res) => {
+      const id = req.params.id;
+      const updatedJob = req.body;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updateJobs = {
+        $set: {
+          banner: updatedJob.banner,
+          cname: updatedJob.cname,
+          title: updatedJob.title,
+          category: updatedJob.category,
+          salary: updatedJob.salary,
+          date: updatedJob.date,
+          description: updatedJob.description,
+          postingDate: updatedJob.postingDate,
+        },
+      };
+      const result = await jobCollection.updateOne(filter, updateJobs, options);
+      res.json(result);
+    });
 
 
 
