@@ -51,6 +51,11 @@ async function run() {
 
       app.post('/appliedjobs', async (req, res) => {
         const newAppliedJob = req.body;
+        const update = await jobCollection.updateOne(
+          { _id: new ObjectId(newAppliedJob.jobId) },
+          { $inc: { applicationNumber
+            : 1 } }
+        );
         // console.log(newAppliedJob); // checking if the data is coming or hitting (ok)
         const result = await appliedJobCollection.insertOne(newAppliedJob);
         res.json(result);
@@ -58,7 +63,7 @@ async function run() {
 
     // all get requests here
      app.get('/jobs', async (req, res) => {
-      const cursor = jobCollection.find({});
+      const cursor = jobCollection.find( req.query.email ? {email: req.query.email} : {});
       const jobs = await cursor.toArray();
       res.send(jobs);
     })
@@ -74,7 +79,7 @@ async function run() {
 
     // applied jobs (get single job)
     app.get('/appliedjobs' , async (req, res) => {
-      const cursor = appliedJobCollection.find({});
+      const cursor = appliedJobCollection.find(req.query.email ? {email: req.query.email} : {});
       const result = await cursor.toArray();
       res.send(result);
     })
